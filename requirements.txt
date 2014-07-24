@@ -1,0 +1,6 @@
+Cython
+mpi4py
+SQLAlchemy
+MySQL-python
+numpy>=1.3.0
+cogent
