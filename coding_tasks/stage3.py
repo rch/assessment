@@ -29,6 +29,13 @@ def parse(handle):
         vals = [int(v) if v.isdigit() else v for v in line.strip().split('\t')]
         yield Entry(*vals)
 
+
+def gene_name(attribute):
+    parts = [part.strip() for part in attribute.strip().split(';') if part]
+    fields = dict((k, v) for k,v in map(lambda x: x.split(), parts))
+    return fields.get('gene_name', None)
+
+
 def main():
     parser = argparse.ArgumentParser(description='reports percent of sequences greater than 30 nt long')
     parser.add_argument('positions', type=str, nargs=1, help='positions file')
@@ -42,7 +49,7 @@ def main():
             try:
                 chrom, position = line.strip().split('\t')
             except ValueError:
-                print line
+                print(line)
             positions[chrom].append(int(position))
     
     annotations = defaultdict(list)
@@ -52,8 +59,6 @@ def main():
     
     results = defaultdict(list)
     for chrom, entries in positions.iteritems():
-        entries.sort()
-        annotations[chrom].sort(key=itemgetter(Entry._fields.index('start')))
         for pos in entries:
             for num, annotation in enumerate(annotations[chrom]):
                 if annotation.end >= pos and annotation.start <= pos:
@@ -61,8 +66,7 @@ def main():
     
     with open(args.output[0],'w') as f:
         for key, entries in results.iteritems():
-            print key[0], key[1], ','.join(set([v.attribute for v in entries]))
-            f.write('{}\n'.format(key[0], key[1], ','.join(set([v.attribute for v in entries]))))
+            f.write('{}\t{}\t{}\n'.format(key[0], key[1], ','.join([gene_name(v.attribute) for v in entries])))
 
 if __name__ == '__main__':
     main()

@@ -1,0 +1,2 @@
+sample_files/fastq/read1/Sample_R1.fastq	80.7107%
+sample_files/fastq/read2/Sample_R2.fastq	83.6717%
